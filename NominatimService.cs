@@ -1,15 +1,14 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using static PosiTrace.geocodingInner;
 
 namespace PosiTrace
 {
-    public class APIService
+    public class NominatimService
     {
         private readonly HttpClient _httpClient;
 
-        public APIService(HttpClient httpClient)
+        public NominatimService(HttpClient httpClient)
         {
             _httpClient = httpClient;
 

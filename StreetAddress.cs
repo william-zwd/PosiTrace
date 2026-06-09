@@ -1,15 +1,17 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.RegularExpressions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace PosiTrace
 {
     public class StreetAddress
     {
-        public string NormalizedAddress { get; set; }
+        [Key] // Defines the field as the primary key
+        [DatabaseGenerated(DatabaseGeneratedOption.None)] // Disables auto-generation
+        public string Address { get; set; }
         public string GeoCoding { get; set; }
 
-        public static string Normalize(string address)
+        public static string RemoveAUS(string address)
         {
             string[] tokens = address.Split(',');
             var ret = new List<string>();

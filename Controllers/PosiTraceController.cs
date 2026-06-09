@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace PosiTrace.Controllers
 {
@@ -7,6 +8,8 @@ namespace PosiTrace.Controllers
     [Route("[controller]")]
     public class PosiTraceController : ControllerBase
     {
+        private readonly IDbContextFactory<AppDBContext> _factory;
+
         private static string[] Addresses = new[]
         {
             "514-12677 110A Avenue", "5172 Kingsway, Unit 250, Burnaby", "5172 Kingsway Unit 250, Burnaby"
@@ -14,9 +17,11 @@ namespace PosiTrace.Controllers
 
         private readonly ILogger<PosiTraceController> _logger;
 
-        public PosiTraceController(ILogger<PosiTraceController> logger)
+        public PosiTraceController(ILogger<PosiTraceController> logger,
+            IDbContextFactory<AppDBContext> factory)
         {
             _logger = logger;
+            _factory = factory;
         }
 
         [HttpPost]
@@ -29,21 +34,37 @@ namespace PosiTrace.Controllers
             }
 
             var httpClient = new HttpClient();
-            var apiService = new APIService(httpClient);
+            var apiService = new NominatimService(httpClient);
+
+            // cache db
+            var context = await _factory.CreateDbContextAsync();
 
             // 
             var ret = new List<StreetAddress>();
             foreach (var address in request)
             {
-                var normal = StreetAddress.Normalize(address);
-                ret.Add(new StreetAddress
+                var normal = StreetAddress.RemoveAUS(address);
+                var sa = context.StreetAddresses.FirstOrDefault(s => s.Address == normal);
+                if (sa != null)
                 {
-                    NormalizedAddress = normal,
-                    GeoCoding = await apiService.GetGeoCodingAsync(normal)
-                });
+                    ret.Add(sa);
+                }
+                else
+                {
+                    var newSA = new StreetAddress
+                    {
+                        Address = normal,
+                        GeoCoding = await apiService.GetGeoCodingAsync(normal)
+                    };
+                    ret.Add(newSA);
 
-                // wait 1 second
-                Thread.Sleep(1000);
+                    // add to cache db
+                    context.StreetAddresses.Add(newSA);
+                    context.SaveChanges();
+
+                    // wait 1 second
+                    Thread.Sleep(1000);
+                }
             }
 
             // Returns a HTTP 201 Created status
