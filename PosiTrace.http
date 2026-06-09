@@ -1,0 +1,8 @@
+@PosiTrace_HostAddress = http://localhost:5244
+
+###
+
+POST {{TodoApi_HostAddress}}/positrace/
+Content-Type: application/json
+
+["514-12677 110A Avenue", "5172 Kingsway, Unit 250, Burnaby", "5172 Kingsway Unit 250, Burnaby"]
