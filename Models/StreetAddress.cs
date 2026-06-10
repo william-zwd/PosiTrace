@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.RegularExpressions;
 
-namespace PosiTrace
+namespace PosiTrace.Models
 {
     public class StreetAddress
     {
@@ -29,8 +29,20 @@ namespace PosiTrace
             return string.Join(", ", ret);
         }
 
-        public static string PostCode(string address)
+        public static string PostalCode(string address)
         {
+            string pattern = @"\b[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ][ -]?\d[ABCEGHJKLMNPRSTVWXYZ]\d\b";
+
+            string[] tokens = address.Split(',');
+            foreach (var token in tokens)
+            {
+                MatchCollection matches = Regex.Matches(token.Trim().ToUpper(), pattern, RegexOptions.IgnoreCase);
+                if (matches.Count > 0)
+                {
+                    return matches[0].Value;
+                }
+            }
+
             return "";
         }
     }

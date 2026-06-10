@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using PosiTrace.Models;
+using PosiTrace.Services;
+using System.Text;
 
 namespace PosiTrace.Controllers
 {
@@ -51,13 +53,58 @@ namespace PosiTrace.Controllers
                 }
                 else
                 {
-                    var newSA = new StreetAddress
-                    {
-                        Address = normal,
-                        GeoCoding = await apiService.GetGeoCodingAsync(normal)
-                    };
-                    ret.Add(newSA);
+                    StreetAddress newSA = null;
 
+                    var geoCoding = await apiService.GetGeoCodingAsync(normal);
+                    // normal address does not find geoCoding
+                    if (geoCoding == "")
+                    {
+                        // wait 1 second
+                        Thread.Sleep(1000);
+
+                        // try to find postal code in address
+                        var postalCode = StreetAddress.PostalCode(address);
+                        // there is postal code exists in address
+                        if (postalCode != null)
+                        {
+                            geoCoding = await apiService.GetGeoCodingAsync(postalCode);
+                            if (geoCoding != "")
+                            {
+                                newSA = new StreetAddress()
+                                {
+                                    Address = "Using PostalCode " + postalCode,
+                                    GeoCoding = geoCoding
+                                };
+                            }
+                            else
+                            {
+                                newSA = new StreetAddress()
+                                {
+                                    Address = normal,
+                                    GeoCoding = ""
+                                };
+                            }
+                        }
+                        // there is no postal code in address
+                        else
+                        {
+                            newSA = new StreetAddress()
+                            {
+                                Address = normal,
+                                GeoCoding = ""
+                            };
+                        }
+                    }
+                    // normal address finds geoCoding
+                    else
+                    {
+                        newSA = new StreetAddress
+                        {
+                            Address = normal,
+                            GeoCoding = geoCoding
+                        };
+                    }
+                        
                     // add to cache db
                     context.StreetAddresses.Add(newSA);
                     context.SaveChanges();

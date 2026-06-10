@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using PosiTrace;
+using PosiTrace.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

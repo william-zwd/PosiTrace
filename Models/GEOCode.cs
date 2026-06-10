@@ -1,4 +1,4 @@
-﻿namespace PosiTrace
+﻿namespace PosiTrace.Models
 {
     public class geocodingOuter
     {

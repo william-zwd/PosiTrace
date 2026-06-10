@@ -1,8 +1,9 @@
-﻿using System.Net.Http.Headers;
+﻿using PosiTrace.Models;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
-namespace PosiTrace
+namespace PosiTrace.Services
 {
     public class NominatimService
     {

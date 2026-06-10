@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PosiTrace.Models;
 
-namespace PosiTrace
+namespace PosiTrace.Services
 {
     public class AppDBContext : DbContext
     {
