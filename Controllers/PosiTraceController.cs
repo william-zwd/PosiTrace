@@ -65,15 +65,15 @@ namespace PosiTrace.Controllers
                         // try to find postal code in address
                         var postalCode = StreetAddress.PostalCode(address);
                         // there is postal code exists in address
-                        if (postalCode != null)
+                        if (postalCode != "")
                         {
                             geoCoding = await apiService.GetGeoCodingAsync(postalCode);
                             if (geoCoding != "")
                             {
                                 newSA = new StreetAddress()
                                 {
-                                    Address = "Using PostalCode " + postalCode,
-                                    GeoCoding = geoCoding
+                                    Address = normal,
+                                    GeoCoding = "Using PostalCode " + postalCode + " " + geoCoding
                                 };
                             }
                             else
@@ -81,7 +81,7 @@ namespace PosiTrace.Controllers
                                 newSA = new StreetAddress()
                                 {
                                     Address = normal,
-                                    GeoCoding = ""
+                                    GeoCoding = "Using PostalCode " + postalCode
                                 };
                             }
                         }

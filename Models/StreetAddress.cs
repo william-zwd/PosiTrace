@@ -31,7 +31,7 @@ namespace PosiTrace.Models
 
         public static string PostalCode(string address)
         {
-            string pattern = @"\b[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ][ -]?\d[ABCEGHJKLMNPRSTVWXYZ]\d\b";
+            string pattern = @"[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ][ -]?\d[ABCEGHJKLMNPRSTVWXYZ]\d";
 
             string[] tokens = address.Split(',');
             foreach (var token in tokens)
