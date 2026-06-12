@@ -110,6 +110,8 @@ namespace PosiTrace.Controllers
                     // add to cache db
                     context.StreetAddresses.Add(newSA);
                     context.SaveChanges();
+                    // add to post return
+                    ret.Add(newSA);
 
                     // wait 1 second
                     Thread.Sleep(1000);

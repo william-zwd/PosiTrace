@@ -36,10 +36,10 @@ namespace PosiTrace.Tests
             var response = await _client.PostAsJsonAsync("/positrace", _address);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            var sa = await response.Content.ReadFromJsonAsync<StreetAddress>();
+            var sa = await response.Content.ReadFromJsonAsync<List<StreetAddress>>();
             Assert.NotNull(sa);
-            Assert.True(sa.Address == normal);
-            Assert.True(string.IsNullOrEmpty(sa.GeoCoding));
+            Assert.True(sa[0].Address == normal);
+            Assert.True(string.IsNullOrEmpty(sa[0].GeoCoding));
         }
 
         [Fact]
