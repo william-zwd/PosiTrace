@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using PosiTrace.Models;
 using PosiTrace.Services;
@@ -40,6 +41,7 @@ namespace PosiTrace.Controllers
 
             // cache db
             var context = await _factory.CreateDbContextAsync();
+            context.Database.EnsureCreated();
 
             // 
             var ret = new List<StreetAddress>();
