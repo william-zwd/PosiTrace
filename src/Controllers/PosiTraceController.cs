@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using PosiTrace.Models;
 using PosiTrace.Services;
-using System.Text;
 
 namespace PosiTrace.Controllers
 {

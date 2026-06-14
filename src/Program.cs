@@ -16,6 +16,15 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContextFactory<AppDBContext>(options =>
     options.UseSqlite(connectionString));
 
+// transient Nominatim failure 
+builder.Services.AddHttpClient("PosiTraceClient")
+    .AddStandardResilienceHandler(options =>
+    {
+        // Adjust your resilience options here
+        options.Retry.MaxRetryAttempts = 3;
+        options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(5);
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
