@@ -1,0 +1,23 @@
+%% Mermaid diagram for PosiTrace architecture
+%% Save as .mmd or .md and view with a Mermaid renderer (e.g., GitHub, VS Code Mermaid Preview)
+flowchart LR
+  Client[Client\n(curl / Postman / Browser)] -->|POST /PosiTrace| Controller[PosiTraceController]
+
+  Controller -->|CreateDbContextAsync| DB[SQLite\nStreetAddresses table]
+  Controller -->|calls| Nominatim[NominatimService\n(HttpClient)]
+  Nominatim -->|HTTPS GET /search?q=...| OSM[OpenStreetMap\nNominatim API]
+
+  Controller -->|200 OK JSON array of StreetAddress| Client
+
+  subgraph AppHost
+	Program[Program.cs]
+	Program -.->|AddDbContextFactory<AppDBContext>| DB
+	Program -.->|AddHttpClient("PosiTraceClient")| Nominatim
+	Program -.->|AddControllers / OpenAPI| Controller
+  end
+
+  classDef infra fill:#f9f,stroke:#333,stroke-width:1px;
+  class DB,OSM infra;
+
+  %% Notes
+  click Nominatim "https://nominatim.openstreetmap.org/" "Nominatim service"

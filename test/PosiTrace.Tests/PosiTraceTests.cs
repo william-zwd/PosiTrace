@@ -45,7 +45,7 @@ namespace PosiTrace.Tests
         [Fact]
         public async Task AddressWithPostal_WithNoCache_WithNoGeoCoding()
         {
-            
+
 
             List<string> _address = new List<string>();
             _address.Add("2000000 1000000B Avenue y1y 2z2");
@@ -66,5 +66,25 @@ namespace PosiTrace.Tests
             Assert.True(sa[0].GeoCoding.Contains("Using PostalCode") && sa[0].GeoCoding.Contains("Y1Y 2Z2"));
         }
 
+        [Fact]
+        public async Task AddressWithASUInFormatXXX_YYY_WithNoCache_ReturnNormalized()
+        {
+            List<string> _address = new List<string>();
+            _address.Add("123-12 Main St");
+            var normal = StreetAddress.RemoveAUS(_address[0]);
+            using var context = await _context.CreateDbContextAsync();
+            context.StreetAddresses.Where(s => s.Address == normal).ExecuteDeleteAsync();
+            context.SaveChanges();
+            context.Dispose();
+
+            var response = await _client.PostAsJsonAsync("/positrace", _address);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            List<StreetAddress> rr = await response.Content.ReadFromJsonAsync<List<StreetAddress>>();
+            var sa = rr.ToArray();
+            Assert.NotNull(sa);
+            Assert.True(sa[0].Address == "123 Main St");
+
+        }
     }
 }

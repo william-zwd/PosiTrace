@@ -18,7 +18,7 @@ namespace PosiTrace.Models
             foreach (var token in tokens) 
             {
                 var addToken = token.Trim();
-                addToken = Regex.Replace(addToken, @"^\d+-", "");
+                addToken = Regex.Replace(addToken, @"-\d+", "");
                 addToken = Regex.Replace(addToken, @"\s*(Apt|Unit|Suite|#).*", "", RegexOptions.IgnoreCase);
                 if (!string.IsNullOrEmpty(addToken))
                 {
